@@ -5,6 +5,7 @@
 
 ![блок схема](scheme.png)
 - login@password for testing demo@demo
+- исходники в utf-8.  Но под win10 в cmd.exe с кодировкой было все ок. 
 - type /help to view chat commands
 
 |Команда|Описание|
