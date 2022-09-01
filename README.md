@@ -3,4 +3,6 @@
 
 - using [State pattern](https://refactoring.guru/ru/design-patterns/state)
 
+![блок схема](scheme.png)
+
 
