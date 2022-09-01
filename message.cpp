@@ -47,12 +47,12 @@ std::ostream& operator<< (std::ostream &out, const Message &msg)
 }
 
 
-Message::Message(std::string from_user, std::string to_user, std::string a_text) : m_date(time(0)), m_from(from_user), m_to(to_user), m_text(a_text), m_was_read(false)
+Message::Message(const std::string& from_user, const std::string& to_user, const std::string& a_text) : m_date(time(0)), m_from(from_user), m_to(to_user), m_text(a_text), m_was_read(false)
 {
 
 }
 
-Message::Message(std::string from_user, std::string a_text) : m_date(time(0)), m_from(from_user), m_to(""), m_text(a_text), m_was_read(false)
+Message::Message(const std::string& from_user, const std::string& a_text) : m_date(time(0)), m_from(from_user), m_to(""), m_text(a_text), m_was_read(false)
 {
 
 };
