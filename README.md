@@ -1,2 +1,6 @@
 # sf-project1
-Console chat
+ - Console chat
+
+- using [State pattern](https://refactoring.guru/ru/design-patterns/state)
+
+
