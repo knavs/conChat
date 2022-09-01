@@ -12,8 +12,8 @@ class Message
     std::string m_text;
     bool m_was_read;
 public:
-    Message(std::string from_user, std::string to_user, std::string a_text);
-    Message(std::string from_user, std::string a_text);
+    Message(const std::string& from_user, const std::string& to_user, const std::string& a_text);
+    Message(const std::string& from_user, const std::string& a_text);
     std::string text() const;
     std::string from() const;
     std::string to() const;
