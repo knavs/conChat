@@ -65,7 +65,6 @@ std::unique_ptr<Chat> initChat() {
 
     for (const auto& bot : bots) ptr->addUser(bot.first, bot.second);
 
-
     std::cout << "::CHAT INIT DONE::";
     //system("cls");
     std::cout << utils::clear_escape_code;
