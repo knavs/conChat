@@ -12,6 +12,4 @@ public:
     void welcome() override;
     void send(Message*) override;
     void leave() override;
-private:
-    int CountDown;
 };

@@ -33,22 +33,27 @@ void ClientState::interact()
             std::cout << pChat->getCurrentUser()->getLogin() <<std::endl;
 
         } else if ("/users" == cmd) {
-            std::cout << Utils::bold("Total: ") << pChat->getUsers().size() << std::endl;
-            for (auto user : pChat->getUsers())
-                std::cout << user.getLogin() << (user.getLogin() == pChat->getCurrentUser()->getLogin() ? Utils::bold(" (you)") : "")<< std::endl;
+            std::cout << utils::bold("Total: ") << pChat->getUsers().size() << std::endl;
+            for (const auto& user : pChat->getUsers()) {
+                if (user.getLogin() == pChat->getCurrentUser()->getLogin())
+                    std::cout << utils::fg_green(utils::bold(user.getLogin()) + " (you)") << std::endl;
+                else
+                    std::cout << user.getLogin() << std::endl;
+            }
+
 
         } else if ("/help" == cmd) {
             help();
 
         } else if ("/exit" == cmd || "/logout" == cmd) {
             pChat->leave();
-            // Be very carefull... now you are actually are a JumpState object!
+            // Be very carefull... now you are actually are a StrangerState object!
             // But you are still running code in here what the face?
-            return;
+            return; // void
         } else if ("/" == cmd || "/inbox" == cmd){
             std::cout << *pChat;
         } else if ("/personal" == cmd || "/private" == cmd) {
-            for (auto msg : pChat->getMessages())
+            for (const auto& msg : pChat->getMessages())
                 if (msg.to() == pChat->getCurrentUser()->getLogin()) std::cout << msg;
         } else {
             throw std::domain_error("Unknown command");
@@ -60,12 +65,12 @@ void ClientState::interact()
 
 void ClientState::help()
 {
-    std::cout << "/help - покзать справку\n";
-    std::cout << "/exit /logout - покинуть чат чат\n";
-    std::cout << "@username - написать личное сообщение пользователю `username`\n";
-    std::cout << "/inbox - показать все сообщения чата\n";
-    std::cout << "/personal - показать все личные сообщения\n";
-    std::cout << "/users - показать список пользователей\n";
+    std::cout << "/help - покзать справку\n"
+                "/exit /logout - покинуть чат чат\n"
+                "@username - написать личное сообщение пользователю `username`\n"
+                "/inbox - показать все сообщения чата\n"
+                "/personal - показать все личные сообщения\n"
+                "/users - показать список пользователей\n";
 }
 
 void ClientState::welcome()
@@ -74,13 +79,12 @@ void ClientState::welcome()
     help();
 }
 
-void ClientState::send(Message *)
+void ClientState::send(Message * msg)
 {
-    std::cout << "SEND";
+    pChat->send(msg->from(), msg->to(), msg->text());
 }
 
 void ClientState::leave()
 {
     pChat->ChangeCurrentState<StrangerState>();
-    return;
 }

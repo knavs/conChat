@@ -24,10 +24,10 @@ void StrangerState::interact()
     std::getline(std::cin, input);
 
     if ("/login" == input) {
-        auto [login, password] = pChat->inputCredentials();
+        auto [login, password] = Chat::inputCredentials();
 
 
-        for (auto user : pChat->getUsers()) {
+        for (const auto& user : pChat->getUsers()) {
             if (!login.compare(user.getLogin()) && !password.compare(user.getPassword())) {
                 auto userObj = std::make_shared<User>(login, password);
                 pChat->setCurrentUser(userObj);
@@ -39,9 +39,9 @@ void StrangerState::interact()
         }
 
     } else if ("/register" == input) {
-        auto [login, password] = pChat->inputCredentials();
+        auto [login, password] = Chat::inputCredentials();
         pChat->addUser(login, password);
-        for (auto user : pChat->getUsers())
+        for (const auto& user : pChat->getUsers())
                 std::cout << user.getLogin() << std::endl;
 
     } else if ("/help" == input) {
@@ -52,14 +52,14 @@ void StrangerState::interact()
 
 void StrangerState::help()
 {
-    std::cout << "/register" << " - зарегистрировать новый аккаунт\n";
-    std::cout << "/login - авторизоваться с существующим аккаунтом (тестовый: demo@demo)\n";
-    std::cout << "/help - показать помощь\n";
+    std::cout << "/register - зарегистрировать новый аккаунт\n"
+                 "/login - авторизоваться с существующим аккаунтом (тестовый: demo@demo)\n"
+                 "/help - показать помощь\n";
 }
 
 void StrangerState::welcome()
 {
-    std::cout << Utils::fg_blue("Welcome") << " stranger!\n";
+    std::cout << utils::fg_blue("Welcome") << " stranger!\n";
     help();
 }
 

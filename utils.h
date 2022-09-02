@@ -4,7 +4,9 @@
 #include <string_view>
 
 
-struct Utils {
+namespace utils {
+
+const std::string clear_escape_code = "\033[H\033[2J";
 
 static std::string bg(std::string_view str) {
     static char esc_char = 27;

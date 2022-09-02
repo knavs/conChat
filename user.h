@@ -14,11 +14,12 @@ public:
     const std::string& getPassword() const;
     void setPassword(const std::string &password);
 
+
+    static void assert_valid_username(const std::string& login);
+    static void assert_valid_password(const std::string& password);
+
 private:
     std::string m_login;
     std::string m_password;
-
-    void assert_valid_username(const std::string& login);
-    void assert_valid_password(const std::string& password);
 };
 

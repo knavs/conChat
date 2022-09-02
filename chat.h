@@ -19,6 +19,7 @@ class Chat {
 public:
     Chat();
     ~Chat();
+
     //
     // STATE BASED FUNCTIONS
     //
@@ -31,12 +32,7 @@ public:
     template <typename T>
     void ChangeCurrentState();
 
-
     // ALL THE OTHER FUNCTIONS
-
-    // Helper TUI functions
-    static std::pair<std::string, std::string> parseCommand(const std::string& command); // -> (cmdname, parameter)
-    static std::pair<std::string, std::string> inputCredentials();
 
     std::shared_ptr<User> getCurrentUser() const;
     void setCurrentUser(std::shared_ptr<User> current_user);
@@ -45,6 +41,11 @@ public:
     const std::vector<Message>& getMessages() const;
 
     void addUser(const std::string& username, const std::string& password);
+
+
+    // Helper TUI functions
+    static std::pair<std::string, std::string> parseCommand(const std::string& command); // -> (cmdname, parameter)
+    static std::pair<std::string, std::string> inputCredentials();
 
     friend std::ostream& operator<< (std::ostream &out, const Chat &channel);
 

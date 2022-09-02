@@ -14,6 +14,5 @@ public:
     void send(Message*) override;
     void leave() override;
 private:
-    int CountDown;
     User* m_current_user;
 };

@@ -60,14 +60,15 @@ std::unique_ptr<Chat> initChat() {
     ptr->ChangeCurrentState<StrangerState>(); //assume we are users now
 
 
-    for (auto msg : offtop) ptr->send(msg[0], msg[2], msg[1]);
+    for (const auto& msg : offtop) ptr->send(msg[0], msg[2], msg[1]);
 
 
-    for (auto bot : bots) ptr->addUser(bot.first, bot.second);
+    for (const auto& bot : bots) ptr->addUser(bot.first, bot.second);
 
 
     std::cout << "::CHAT INIT DONE::";
-    system("cls");
+    //system("cls");
+    std::cout << utils::clear_escape_code;
 
     ptr->ChangeCurrentState<StrangerState>();
     return ptr;

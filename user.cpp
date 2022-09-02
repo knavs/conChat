@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include <regex>
+#include <iostream>
 
 User::User(const std::string &login, const std::string &password) : m_login(login), m_password(password)
 {
@@ -43,8 +44,8 @@ void User::assert_valid_username(const std::string &login)
     if(!containsOnlyAlphaAndUdnerscore(login))
         throw std::runtime_error("Username must start with a latin letter and contain only letters, numbers and `_`");
 
-    if (login.length() < 4 or login.length() > 8)
-        throw std::length_error("Username must be 4 to 8 chars long");
+    if (login.length() < 2 or login.length() > 12)
+        throw std::length_error("Username must be 2 to 12 chars long");
 }
 
 
@@ -53,6 +54,6 @@ void User::assert_valid_password(const std::string &password)
     if(!containsOnlyAlphaAndSpecialChars(password))
         throw std::runtime_error("Username must start with a latin letter and contain only letters, numbers and `_`");
 
-    if (password.length() < 4 or password.length() > 8)
-        throw std::length_error("Username must be 4 to 8 chars long");
+    if (password.length() < 4 or password.length() > 10)
+        throw std::length_error("Password must be 4 to 10 chars long");
 }
