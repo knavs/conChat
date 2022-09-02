@@ -1,13 +1,12 @@
 # sf-project1
- - Console chat
-
-- using [State pattern](https://refactoring.guru/ru/design-patterns/state)
-
+ - Проект консольный чат
+- Попытка применения [State pattern](https://refactoring.guru/ru/design-patterns/state) (*прим: коряво получилось*)
 ![блок схема](scheme.png)
-- login@password for testing demo@demo
+- для входа в чат использовать встроенный аккаунт demo@demo или создать новый
 - требуется С++17
 - исходники в utf-8.  Но под win10 в cmd.exe с кодировкой было все ок. 
-- type /help to view chat commands
+- справка выводится по команде /help
+- список доступных комманд
 
 |Команда|Описание|
 |--------------|---|
