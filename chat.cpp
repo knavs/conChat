@@ -24,30 +24,20 @@ void Chat::interact() {
     }
 }
 
-void Chat::welcome()
-{
-    m_current_state->welcome();
+void Chat::welcome() { m_current_state->welcome(); }
+
+void Chat::help() { m_current_state->help(); }
+
+void Chat::send(const std::string &input_string) {
+  m_current_state->send(input_string);
 }
 
-
-void Chat::help()
-{
-    m_current_state->help();
+void Chat::addMessage(const std::string &from, const std::string &to,
+                      const std::string &text) {
+  m_messages.push_back(Message(from, to, text));
 }
 
-void Chat::send(const std::string& from, const std::string& to, const std::string& text)
-{
-    m_messages.push_back(Message(from, to, text));
-}
-
-
-void Chat::leave()
-{
-    m_current_state->leave();
-}
-
-
-
+void Chat::leave() { m_current_state->leave(); }
 
 std::pair<std::string, std::string> Chat::parseCommand(const std::string& text)
 {

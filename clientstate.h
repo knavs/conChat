@@ -3,16 +3,20 @@
 #include "message.h"
 #include "user.h"
 
-class ClientState : public State
-{
+class ClientState : public State {
 public:
-    ClientState(Chat* owner);
+  explicit ClientState(Chat *owner);
 
-    void interact() override;
-    void help() override;
-    void welcome() override;
-    void send(Message*) override;
-    void leave() override;
+  // State functions override
+  void interact() override;
+  void help() override;
+  void welcome() override;
+  void send(const std::string &input_string) override;
+  void leave() override;
+
 private:
-    User* m_current_user;
+  User *m_current_user;
+
+  // Helper functions
+  void run_command(const std::string &input_string);
 };

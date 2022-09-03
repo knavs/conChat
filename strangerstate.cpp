@@ -6,7 +6,6 @@
 #include "utils.h"
 
 
-
 StrangerState::StrangerState(Chat* owner)
     : State(owner)
 {
@@ -26,16 +25,16 @@ void StrangerState::interact()
     if ("/login" == input) {
         auto [login, password] = Chat::inputCredentials();
 
-
-        for (const auto& user : pChat->getUsers()) {
-            if (!login.compare(user.getLogin()) && !password.compare(user.getPassword())) {
-                auto userObj = std::make_shared<User>(login, password);
-                pChat->setCurrentUser(userObj);
-                pChat->ChangeCurrentState<ClientState>();
-                // Be very carefull... now you are actually are a ClientState object!
-                // But you are still running code in here what the face?
-                return;
-            }
+        for (const auto &user : pChat->getUsers()) {
+          if (!login.compare(user.getLogin()) &&
+              !password.compare(user.getPassword())) {
+            auto userObj = std::make_shared<User>(login, password);
+            pChat->setCurrentUser(userObj);
+            pChat->ChangeCurrentState<ClientState>();
+            // Be very carefull... now you are actually are a ClientState
+            // object! But you are still running code in here what the face?
+            return;
+          }
         }
 
     } else if ("/register" == input) {
@@ -63,9 +62,8 @@ void StrangerState::welcome()
     help();
 }
 
-void StrangerState::send(Message *)
-{
-    throw std::domain_error("You must be logged in to send messages");
+void StrangerState::send(const std::string &input_message) {
+  throw std::domain_error("You must be logged in to send messages");
 }
 
 void StrangerState::leave()

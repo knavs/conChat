@@ -5,11 +5,11 @@
 class StrangerState : public State
 {
 public:
-    StrangerState(Chat* owner);
+  explicit StrangerState(Chat *owner);
 
-    void interact() override;
+  void interact() override;
     void help() override;
     void welcome() override;
-    void send(Message*) override;
+    void send(const std::string &input_string) override;
     void leave() override;
 };

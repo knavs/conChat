@@ -5,62 +5,23 @@
 #include "clientstate.h"
 #include "utils.h"
 
-ClientState::ClientState(Chat* owner)
-    : State(owner)
-{
+ClientState::ClientState(Chat *owner) : State(owner), m_current_user(nullptr) {
     welcome();
 }
 
+void ClientState::interact() {
+  std::string text = "text";
+  std::cout << "> ";
+  std::getline(std::cin, text);
 
-void ClientState::interact()
-{
-    // Основной спагетти код с каллбеками идет тут
-    // Вроде на этот случай мог бы подойти паттерн команда. Но решил не городить вроде и так простой код.
-    std::string text = "text";
+  if (text.front() == '@' or
+      text.front() !=
+          '/') { // send personal or public message (aka it's not a command)
+    pChat->send(text);
 
-
-    std::cout << "> ";
-
-    std::getline(std::cin, text);
-
-    auto [cmd, rest] = Chat::parseCommand(text);
-
-    if (cmd.at(0) == '@') { //send message
-        pChat->send(pChat->getCurrentUser()->getLogin(), (cmd == "@all" ? "" : cmd.substr(1)), rest);
-
-    } else { // run command
-        if ("/whoami" == cmd) {
-            std::cout << pChat->getCurrentUser()->getLogin() <<std::endl;
-
-        } else if ("/users" == cmd) {
-            std::cout << utils::bold("Total: ") << pChat->getUsers().size() << std::endl;
-            for (const auto& user : pChat->getUsers()) {
-                if (user.getLogin() == pChat->getCurrentUser()->getLogin())
-                    std::cout << utils::fg_green(utils::bold(user.getLogin()) + " (you)") << std::endl;
-                else
-                    std::cout << user.getLogin() << std::endl;
-            }
-
-
-        } else if ("/help" == cmd) {
-            help();
-
-        } else if ("/exit" == cmd || "/logout" == cmd) {
-            pChat->leave();
-            // Be very carefull... now you are actually are a StrangerState object!
-            // But you are still running code in here what the face?
-            return; // void
-        } else if ("/" == cmd || "/inbox" == cmd){
-            std::cout << *pChat;
-        } else if ("/personal" == cmd || "/private" == cmd) {
-            for (const auto& msg : pChat->getMessages())
-                if (msg.to() == pChat->getCurrentUser()->getLogin()) std::cout << msg;
-        } else {
-            throw std::domain_error("Unknown command");
-        }
-
-    }
-
+  } else { // run command
+    run_command(text);
+  }
 }
 
 void ClientState::help()
@@ -75,16 +36,59 @@ void ClientState::help()
 
 void ClientState::welcome()
 {
-    std::cout << "Welcome, you are logged in as " << pChat->getCurrentUser()->getLogin() << "@" << pChat->getCurrentUser()->getPassword() << "!" << std::endl;
+  std::cout << "Welcome, you are logged in as "
+            << pChat->getCurrentUser()->getLogin() << "@"
+            << pChat->getCurrentUser()->getPassword() << "!" << std::endl;
+  help();
+}
+
+void ClientState::send(const std::string &input_string) {
+  auto [address, text_message] = Chat::parseCommand(input_string);
+
+  pChat->addMessage(pChat->getCurrentUser()->getLogin(),
+                    (address == "@all" ? "" : address.substr(1)), text_message);
+}
+
+void ClientState::leave() { pChat->ChangeCurrentState<StrangerState>(); }
+
+void ClientState::run_command(const std::string &text) {
+  // Основной спагетти код с каллбеками идет тут
+  // Вроде на этот случай мог бы подойти паттерн команда. Но решил не городить
+  // вроде и так простой код.
+  auto [cmd, rest] = Chat::parseCommand(text);
+
+  if ("/whoami" == cmd) {
+    std::cout << pChat->getCurrentUser()->getLogin() << std::endl;
+
+  } else if ("/users" == cmd) {
+    std::cout << utils::bold("Total: ") << pChat->getUsers().size()
+              << std::endl;
+    for (const auto &user : pChat->getUsers()) {
+      if (user.getLogin() == pChat->getCurrentUser()->getLogin())
+        std::cout << utils::fg_green(utils::bold(user.getLogin()) + " (you)")
+                  << std::endl;
+      else
+        std::cout << user.getLogin() << std::endl;
+    }
+
+  } else if ("/help" == cmd) {
     help();
-}
 
-void ClientState::send(Message * msg)
-{
-    pChat->send(msg->from(), msg->to(), msg->text());
-}
+  } else if ("/exit" == cmd || "/logout" == cmd) {
+    leave();
+    // Be very carefull... now you are actually are a StrangerState object!
+    // But you are still running code in here what the face?
+    return; // void
 
-void ClientState::leave()
-{
-    pChat->ChangeCurrentState<StrangerState>();
+  } else if ("/inbox" == cmd || cmd == "/") {
+    std::cout << *pChat;
+
+  } else if ("/personal" == cmd || "/private" == cmd) {
+    for (const auto &msg : pChat->getMessages())
+      if (msg.to() == pChat->getCurrentUser()->getLogin())
+        std::cout << msg;
+
+  } else {
+    throw std::domain_error("Unknown command");
+  }
 }

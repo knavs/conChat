@@ -34,7 +34,6 @@ std::string Message::to_string() const
 }
 
 
-
 time_t Message::date() const
 {
     return m_date;
