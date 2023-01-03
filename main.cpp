@@ -1,10 +1,15 @@
+#include <QCoreApplication>
+#include <QCommandLineParser>
 #include <iostream>
 #include "chat.h"
+#include "server.h"
+#include "client.h"
 #include <memory>
 #include <vector>
 #include <map>
 #include <string>
 #include "utils.h"
+#include <utility>
 
 
 /*
@@ -20,20 +25,20 @@
  */
 
 
-std::unique_ptr<Chat> initChat() {
+std::shared_ptr<Chat> initChat() {
   static const std::vector<std::vector<std::string>> offtop = {
       {"Alucard",
        "вот что бездушный запад с вами сделал, вы перестали верить в любовь и "
-       "уважение\nвсе у вас пропаганда и куплено\nзабыли искренные чувства",
+       "уважение\r\nвсе у вас пропаганда и куплено\r\nзабыли искренные чувства",
        ""},
       {"verbrecher20",
        "Слово инвалид раньше означало ветеран, возможно это издержки словарей "
        "старых",
        ""},
       {"verbrecher20",
-       "Геральт ронин получился какой то\n Он конечно такой но не внешне",
+       "Геральт ронин получился какой то\r\n Он конечно такой но не внешне",
        "Alucard"},
-      {"Speck", "Kasardzjan\nVolodja roflit\nnad nim", "Napoléon Bonaparte"},
+      {"Speck", "Kasardzjan\r\nVolodja roflit\r\nnad nim", "Napoléon Bonaparte"},
       {"Speck", "smotri on tebja viebat mojet", "verbrecher20"},
       {"verbrecher20", "Проверял?", "Speck"},
       {"Napoleon",
@@ -59,7 +64,7 @@ std::unique_ptr<Chat> initChat() {
        "Институт исследования войны сообщает что за последние 1.5месяца "
        "максимальное продвижение ВС РФ на донбассе  не более 10 км",
        ""},
-      {"x3demon", "верберчер опять бухает?\n побочное действие - агрессия", ""},
+      {"x3demon", "верберчер опять бухает?\r\n побочное действие - агрессия", ""},
       {"verbrecher20", "агрессия от работы)", ""},
       {"ag3nt", "на студентках/школьницах не можешь срывать, срываешь на нас?",
        "verbrecher20"},
@@ -89,14 +94,57 @@ std::unique_ptr<Chat> initChat() {
   return ptr;
 }
 
-int main() {
-  // setlocale(LC_ALL, "Russian");
+int main(int argc, char *argv[]) {
+  QCoreApplication app(argc, argv);
+
+
+  app.setApplicationName("conChat");
+  app.setApplicationVersion("0.1");
+
+
+//  // setlocale(LC_ALL, "Russian");
   system("chcp 65001"); // с этой магической командой у меня под виндой таки
-                        // показывает текст по-русски
+                        // показывает текст по-русски ЖВ
+
+
+
+
+//  QCommandLineParser parser;
+
+//  parser.setApplicationDescription( app.applicationName() +  " (" + app.applicationVersion()  + ")\nConsoleChat homework 20.11");
+//  parser.addHelpOption();
+//  parser.addVersionOption();
+
+//  parser.addOptions({
+//      // например так
+//      {{"s", "server"}, "Run as tcp_server on 127.0.0.1"},
+//      {{"c", "client"}, "Run as tcp_client connect to 127.0.0.1"},
+//      {{"p", "port"}, "port for tcp_server/tcp_client"}
+//  });
+//  parser.process(app);
+
+
+
+
+//  ///=================================================================
+//  ///                        SERVER
+//  ///=================================================================
   auto chatroom = initChat();
 
-  for (int i = 1; i <= 100; ++i)
-    chatroom->interact();
+  Server server;
+  server.setChatroom(chatroom);
+//  ///=================================================================
+//  ///                     Старый conChat
+//  ///=================================================================
 
-  return 0;
+      // Код для запуска для старого conChat'а
+//      for (int i = 1; i <= 50; ++i) {
+//        std::string input;
+//        std::cout << "> ";
+//        std::getline(std::cin, input);
+//        chatroom->interact(input, std::cout);
+//      }
+
+
+  return app.exec();
 }

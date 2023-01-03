@@ -1,8 +1,7 @@
 #include <iostream>
 #include "chat.h"
-#include "strangerstate.h"
+//#include "strangerstate.h"
 #include <utility>
-#include "utils.h"
 
 
 Chat::Chat()
@@ -16,17 +15,26 @@ Chat::~Chat()
     std::cout << "Chats's DESTRUCTOR CALLED" << std::endl;
 }
 
-void Chat::interact() {
+//void Chat::interact() {
+//    try {
+//        m_current_state->interact();
+//    } catch (const std::exception& e) {
+//        std::cout << "Warning" << e.what() << std::endl;
+//    }
+//}
+
+void Chat::interact(std::string_view svin, std::ostream &sout)
+{
     try {
-        m_current_state->interact();
+        m_current_state->interact(svin, sout);
     } catch (const std::exception& e) {
         std::cout << "Warning" << e.what() << std::endl;
     }
 }
 
-void Chat::welcome() { m_current_state->welcome(); }
+std::string Chat::welcome() { return m_current_state->welcome(); }
 
-void Chat::help() { m_current_state->help(); }
+std::string Chat::help() { return m_current_state->help(); }
 
 void Chat::send(const std::string &input_string) {
   m_current_state->send(input_string);
@@ -34,14 +42,27 @@ void Chat::send(const std::string &input_string) {
 
 void Chat::addMessage(const std::string &from, const std::string &to,
                       const std::string &text) {
-  m_messages.push_back(Message(from, to, text));
+    m_messages.push_back(Message(from, to, text));
+}
+
+bool Chat::authUser(const std::string &login, const std::string &password, const std::intptr_t)
+{
+    for (const auto &user : getUsers()) {
+      if (!login.compare(user.getLogin()) && !password.compare(user.getPassword())) {
+        this->setCurrentUser(std::make_shared<User>(login, password));
+        return true;
+      }
+    }
+
+    return false;
+
 }
 
 void Chat::leave() { m_current_state->leave(); }
 
-std::pair<std::string, std::string> Chat::parseCommand(const std::string& text)
+std::pair<std::string, std::string> Chat::parseCommand(std::string_view text_view)
 {
-
+    std::string text{text_view};
     std::pair<std::string, std::string> parsed;
 
 
@@ -49,15 +70,13 @@ std::pair<std::string, std::string> Chat::parseCommand(const std::string& text)
     // 1 - chat command
     // 2 - private message
     // 3 - public message
-    if (text.length() > 1 && text.at(0) == '/') {     // 1. chat command
-        parsed = std::make_pair(text, "");
-    } else if (text.length() > 1 && text.at(0) == '@') {  // 2. private message
+    if (text.length() > 1 && (text.at(0) == '/' || text.at(0) == '@')) {     // 1-2. chat command or private message
         auto ws_pos = text.find(' ');
 
-        std::string address = text.substr(0, ws_pos);
-        std::string rest = (ws_pos ? text.substr(ws_pos) : "");
+        std::string command = text.substr(0, ws_pos);
+        std::string arguments = (ws_pos != std::string::npos ? text.substr(++ws_pos) : "");
 
-        parsed = std::make_pair(address, rest);
+        parsed = std::make_pair(command, arguments);
 
     } else {                                          // 3. public message
         parsed =  std::make_pair("@all", text);
@@ -66,13 +85,12 @@ std::pair<std::string, std::string> Chat::parseCommand(const std::string& text)
     return parsed;
 }
 
-std::pair<std::string, std::string> Chat::inputCredentials()
+std::pair<std::string, std::string> Chat::inputCredentials(std::string text)
 {
-    std::string login, password;
-    std::cout << "Login: ";
-    std::getline(std::cin, login);
-    std::cout << "Password: ";
-    std::getline(std::cin, password);
+    auto a_pos = text.find('@');
+
+    std::string login = text.substr(0, a_pos);
+    std::string password = (a_pos != std::string::npos ? text.substr(++a_pos) : "");
 
     return std::make_pair(login, password);
 }
@@ -114,18 +132,19 @@ void Chat::addUser(const std::string &login, const std::string &password)
 
 std::ostream& operator<<(std::ostream &out, const Chat &channel)
 {
-    out << std::endl << "____________________________________________________________" << std::endl;
+    out << utils::endl << "____________________________________________________________" << utils::endl;
 
-    //out << "\ESC [1mBold\ESC [0m non-bold" << std::endl; // displays Bold in bold
+    //out << "\ESC [1mBold\ESC [0m non-bold" << utils::endl; // displays Bold in bold
     out << "Welcome to chat channel: #" << utils::bold("skillfactory_homework");
-    out << std::endl <<  "____________________________________________________________" << std::endl;
-    out << std::endl << std::endl << std::endl;
+    out << utils::endl <<  "____________________________________________________________" << utils::endl;
+    out << utils::endl << utils::endl << utils::endl;
 
 
     std::string all_messages;
 
-    for (const auto& msg : channel.m_messages)  all_messages += msg.to_string() + "\n";
-
+    for (const auto& msg : channel.m_messages) {
+        all_messages += msg.to_string() + "\n";
+    }
     out << all_messages;
 
     return out;

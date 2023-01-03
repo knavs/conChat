@@ -5,6 +5,7 @@
 #include <string>
 #include <memory>
 #include "user.h"
+#include "utils.h"
 #include "state.h"
 #include "clientstate.h"
 #include "strangerstate.h"
@@ -12,6 +13,7 @@
 class State;
 class StrangerState;
 class ClientState;
+class ServerState;
 
 
 
@@ -23,9 +25,10 @@ public:
     //
     // STATE BASED FUNCTIONS
     //
-    void interact();
-    void welcome();
-    void help();
+    //void interact();
+    void interact(std::string_view svin, std::ostream& out = std::cout);
+    std::string welcome();
+    std::string help();
     void send(const std::string &input_string);
     void leave();
 
@@ -43,10 +46,15 @@ public:
     void addMessage(const std::string &from, const std::string &to,
                     const std::string &text);
 
+
+    bool authUser(const std::string &username, const std::string &password, const std::intptr_t = 0);
+    //bool registerUser()
+
     // Helper TUI functions
     static std::pair<std::string, std::string>
-    parseCommand(const std::string &command); // -> (cmdname, parameter)
-    static std::pair<std::string, std::string> inputCredentials();
+    parseCommand(std::string_view command); // -> (cmdname, parameter)
+
+    static std::pair<std::string, std::string> inputCredentials(std::string);
 
     friend std::ostream &operator<<(std::ostream &out, const Chat &channel);
 

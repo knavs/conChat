@@ -1,11 +1,24 @@
-#ifndef CLIENT_H
-#define CLIENT_H
+#pragma once
+#include <QTcpSocket>
+#include <QHostAddress>
 
 
-class Client
+class Client : public QObject
 {
-public:
-    Client();
-};
+    Q_OBJECT
 
-#endif // CLIENT_H
+public:
+    Client() : socket(new QTcpSocket) {};
+
+
+    void connectToServer(const QHostAddress &host, int port);
+    void sendToServer(QString message);
+    void disconnectFromServer();
+
+private:
+    QTcpSocket* socket;
+
+public slots:
+    //incom
+    void slotReadyRead();
+};

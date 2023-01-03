@@ -4,7 +4,7 @@
 #include <regex>
 #include <iostream>
 
-User::User(const std::string &login, const std::string &password) : m_login(login), m_password(password)
+User::User(const std::string &login, const std::string &password, const std::intptr_t handle) : m_login(login), m_password(password), m_handle(handle)
 {
 
 }
