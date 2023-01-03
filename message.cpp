@@ -26,9 +26,9 @@ std::string Message::to_string() const
     std::string out;
     // Поскольку operator<< является другом класса Point, то мы имеем прямой доступ к членам Point
     out = utils::fg_reverse(from());
-    out += "\n";
+    out += "\r\n";
     out += (to().empty() ? "" : utils::fg_green("@" + to()) + ", ") + text();
-    out += "\n";
+    out += "\r\n";
 
     return out;
 }

@@ -9,57 +9,53 @@
 StrangerState::StrangerState(Chat* owner)
     : State(owner)
 {
-    welcome();
+    std:: cout << welcome();
 }
 
-void StrangerState::interact()
+void StrangerState::interact(std::string_view svin, std::ostream &sout)
 {
-    std::cout << "You need to be logged in to view chat\n";
 
-    std::string input;
+    auto [cmd, args] = Chat::parseCommand(svin);
 
-    std::cout << "> ";
+    if ("/login" == cmd) {
+        auto [login, password] = Chat::inputCredentials(args);
 
-    std::getline(std::cin, input);
-
-    if ("/login" == input) {
-        auto [login, password] = Chat::inputCredentials();
-
-        for (const auto &user : pChat->getUsers()) {
-          if (!login.compare(user.getLogin()) &&
-              !password.compare(user.getPassword())) {
-            auto userObj = std::make_shared<User>(login, password);
-            pChat->setCurrentUser(userObj);
+        if (pChat->authUser(login, password)) {
+            //pChat->getCurrentUser()->setHandle(ser)
+            sout << "Logged in as " << utils::fg_green(pChat->getCurrentUser()->getLogin()) << utils::endl;
             pChat->ChangeCurrentState<ClientState>();
+
             // Be very carefull... now you are actually are a ClientState
             // object! But you are still running code in here what the face?
             return;
-          }
         }
 
-    } else if ("/register" == input) {
-        auto [login, password] = Chat::inputCredentials();
+    } else if ("/register" == cmd) {
+        auto [login, password] = Chat::inputCredentials(args);
         pChat->addUser(login, password);
         for (const auto& user : pChat->getUsers())
-                std::cout << user.getLogin() << std::endl;
+                sout << user.getLogin() << utils::endl;
 
-    } else if ("/help" == input) {
-            help();
+    } else if ("/help" == cmd) {
+            sout << help();
+    } else {
+            sout << utils::bg("Внимание!") << utils::endl;
+            sout << "You need to be logged in to view or write to chat\r\n";
     }
-
 }
 
-void StrangerState::help()
+std::string StrangerState::help()
 {
-    std::cout << "/register - зарегистрировать новый аккаунт\n"
-                 "/login - авторизоваться с существующим аккаунтом (тестовый: demo@demo)\n"
-                 "/help - показать помощь\n";
+    return utils::fg_blue("Справка") + "\n\r/register - зарегистрировать новый аккаунт\n\r"
+"/login - авторизоваться с существующим аккаунтом (тестовый: demo@demo)\n\r"
+"/help - показать помощь\n\r";
 }
 
-void StrangerState::welcome()
+std::string StrangerState::welcome()
 {
-    std::cout << utils::fg_blue("Welcome") << " stranger!\n";
-    help();
+    return  utils::fg_blue("Welcome")
+            + " stranger!" + utils::endl
+            + help();
 }
 
 void StrangerState::send(const std::string &input_message) {
